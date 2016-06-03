@@ -142,7 +142,7 @@ public class SelectorGUI extends javax.swing.JFrame {
             public void run() {
                 int readWrite = 0;
                 SelectorGUI x = new SelectorGUI();
-                x.setSize(400, 800);
+                x.setSize(400, 700);
                 x.setVisible(true);
             }
         });

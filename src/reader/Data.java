@@ -46,6 +46,12 @@ public class Data extends AbstractListModel<String> {
 			else
 				out += "0";
 		}
-		return out;
+                String text = "";
+                for(int i=0;i<out.length();i+=8)
+                {
+                    int charCode = Integer.parseInt(out.substring(i, i+7),2);
+                    text += new Character((char)charCode).toString();
+                }
+		return "lel";
 	}
 }

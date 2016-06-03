@@ -17,6 +17,7 @@ import javax.swing.border.EmptyBorder;
 
 import com.pi4j.io.gpio.Pin;
 import com.pi4j.io.gpio.RaspiPin;
+import java.nio.charset.Charset;
 
 public class WriterGUI extends JFrame {
 
@@ -123,6 +124,8 @@ public class WriterGUI extends JFrame {
             byte[] infoBin = text.getBytes("UTF-8");
             String s = "";
             for (byte b : infoBin) {
+                for(int i=+Integer.toBinaryString(b).length();i<8;i++)
+                    s+="0";
                 s+=Integer.toBinaryString(b);
             }
             boolean[] message = new boolean[s.length()];
