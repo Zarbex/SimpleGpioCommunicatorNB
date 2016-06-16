@@ -104,19 +104,39 @@ public class WriterGUI extends JFrame {
 		});
 	}
 
-	public boolean[] parse(String text) throws Exception {
-		boolean[] message = new boolean[text.length()];
-		for (int i = 0; i < text.length(); i++) {
-			try {
-				if (text.charAt(i) == '0' || text.charAt(i) == '1')
-					message[i] = text.charAt(i) == '1';
-				else
-					throw new Exception("Enter 0 and 1 only.");
-			} catch (Exception e) {
-				throw e;
-			}
+//	public boolean[] parse(String text) throws Exception {
+//		boolean[] message = new boolean[text.length()];
+//		for (int i = 0; i < text.length(); i++) {
+//			try {
+//				if (text.charAt(i) == '0' || text.charAt(i) == '1')
+//					message[i] = text.charAt(i) == '1';
+//				else
+//					throw new Exception("Enter 0 and 1 only.");
+//			} catch (Exception e) {
+//				throw e;
+//			}
+//		}
+//		return message;
+//	}
+        
+        public boolean[] parse(String text) throws Exception {
+            byte[] infoBin = text.getBytes("UTF-8");
+            String s = "";
+            for (byte b : infoBin) {
+                s+=Integer.toBinaryString(b);
+            }
+            boolean[] message = new boolean[s.length()];
+            for (int i = 0; i < s.length(); i++) {
+		try {
+                    if (s.charAt(i) == '0' || s.charAt(i) == '1')
+			message[i] = s.charAt(i) == '1';
+                    else
+                        throw new Exception("Enter 0 and 1 only.");
+                    } catch (Exception e) {
+			throw e;
+                    }
 		}
-		return message;
-	}
+            return message;
+        }
 
 }

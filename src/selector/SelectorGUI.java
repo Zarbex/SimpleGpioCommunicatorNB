@@ -11,8 +11,12 @@ import java.awt.Color;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -30,14 +34,18 @@ public class SelectorGUI extends javax.swing.JFrame {
         null,RaspiPin.GPIO_05,RaspiPin.GPIO_12,null,RaspiPin.GPIO_13,RaspiPin.GPIO_06,RaspiPin.GPIO_14,RaspiPin.GPIO_10,
         null,RaspiPin.GPIO_11,null,null,RaspiPin.GPIO_21,null,RaspiPin.GPIO_22,RaspiPin.GPIO_26,RaspiPin.GPIO_23,null,RaspiPin.GPIO_24,
         RaspiPin.GPIO_27,RaspiPin.GPIO_25,RaspiPin.GPIO_28,null,RaspiPin.GPIO_29};
-    private static int IS_WRITER = 1, IS_READER = 0;
+    private static int IS_WRITER = 1, IS_READER = 0, EXIT = -1;
+    private ImageIcon icon = createImageIcon("selector/Raspberry_Pi_Logo.svg.png",
+                                 "a pretty but meaningless splat");
     
     private List<Pin> pins = new ArrayList<>();
     final int readOrWrite;
     
     public SelectorGUI() {
         Object[] options = {"Reader", "Writer"};
-        readOrWrite = JOptionPane.showOptionDialog(this, "Reader oder Writer?", "Baumann Alphabet \u00a9", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+        readOrWrite = JOptionPane.showOptionDialog(this, "Reader oder Writer?", "Baumann Alphabet \u00a9", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, icon, options, options[0]);
+        if(readOrWrite==EXIT)
+            System.exit(0);
         initComponents();
         initComponents2();
     }
@@ -57,6 +65,7 @@ public class SelectorGUI extends javax.swing.JFrame {
         onOk = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("GPIO Pin Chooser");
 
         jPanel1.setLayout(new java.awt.GridLayout(0, 2));
         getContentPane().add(jPanel1, java.awt.BorderLayout.CENTER);
@@ -87,15 +96,22 @@ public class SelectorGUI extends javax.swing.JFrame {
         JFrame r;
         if(readOrWrite==IS_READER)
             r = new ReaderGUI(syncPin, dataPins);
-        else
+        else 
             r = new WriterGUI(syncPin, dataPins);
         r.setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_onOk
 
-    /**
-     * @param args the command line arguments
-     */
+    protected ImageIcon createImageIcon(String path, String description) {
+        java.net.URL imgURL = getClass().getResource(path);
+        if (imgURL != null) {
+            return new ImageIcon(imgURL, description);
+        } else {
+            System.err.println("Couldn't find file: " + path);
+            return null;
+        }
+    }
+    
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -126,6 +142,7 @@ public class SelectorGUI extends javax.swing.JFrame {
             public void run() {
                 int readWrite = 0;
                 SelectorGUI x = new SelectorGUI();
+                x.setSize(400, 800);
                 x.setVisible(true);
             }
         });
@@ -135,6 +152,7 @@ public class SelectorGUI extends javax.swing.JFrame {
         for(int i = 0; i<panels.length; i++){
             panels[i] = new JPanel();
             panels[i].setBorder(BorderFactory.createLineBorder(Color.black));
+            panels[i].setBackground(Color.LIGHT_GRAY);
             panels[i].setToolTipText(i+1 + "");
             if(PIN_TABLE[i]!=null) {
                 panels[i].addMouseListener(new MouseAdapter()
@@ -144,9 +162,21 @@ public class SelectorGUI extends javax.swing.JFrame {
                     {
                         Object tempi = e.getSource();
                         JPanel panel = (JPanel)tempi;
-                        panel.setBackground(Color.RED);
+                       
                         System.out.println(panel.getToolTipText());
-                        pins.add(PIN_TABLE[Integer.parseInt(panel.getToolTipText())-1]);
+                        if(!pins.contains(PIN_TABLE[Integer.parseInt(panel.getToolTipText())-1]))
+                        {
+                            pins.add(PIN_TABLE[Integer.parseInt(panel.getToolTipText())-1]);
+                            if(pins.size()==1)
+                                panel.setBackground(Color.BLUE);
+                            else
+                                panel.setBackground(Color.RED);
+                        }
+                        else if(pins.contains(PIN_TABLE[Integer.parseInt(panel.getToolTipText())-1]))
+                        {
+                            pins.remove(PIN_TABLE[Integer.parseInt(panel.getToolTipText())-1]);
+                            panel.setBackground(Color.LIGHT_GRAY);
+                        }
                         super.mouseClicked(e); //To change body of generated methods, choose Tools | Templates.
 
                     }
