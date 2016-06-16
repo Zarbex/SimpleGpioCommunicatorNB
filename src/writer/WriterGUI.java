@@ -33,7 +33,7 @@ public class WriterGUI extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					WriterGUI frame = new WriterGUI();
+					WriterGUI frame = new WriterGUI(null, null);
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -45,7 +45,7 @@ public class WriterGUI extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public WriterGUI() {
+	public WriterGUI(Pin syncPinPin, Pin dataPinsPin[]) {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
@@ -78,8 +78,7 @@ public class WriterGUI extends JFrame {
 		JLabel lblMax = new JLabel("2000 ms");
 		panel.add(lblMax, BorderLayout.EAST);
 
-		final Writer w = new Writer(RaspiPin.GPIO_26, new Pin[] {
-				RaspiPin.GPIO_27, RaspiPin.GPIO_28, RaspiPin.GPIO_29 });
+		final Writer w = new Writer(syncPinPin, dataPinsPin);
 
 		btnStart.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
